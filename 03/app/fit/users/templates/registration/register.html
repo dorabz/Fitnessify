@@ -1,0 +1,19 @@
+{% extends "users/base.html" %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<div class="container p-5 my-3 border">
+    <h1 align="center"> Register </h1>
+    <form method="post">
+        {% csrf_token %}
+        {{form|crispy}}
+        <button type="submit" class="btn btn-success" align="center">Register</button>
+    </form>
+</div>
+
+<div class="container p-3 my-3 border" align="center">
+<p class="bp"> Already have an account? Go back to login -
+    <a href="/login" align="center" class="btn btn-warning">Login</a>
+</p>
+</div>
+{% endblock %}
