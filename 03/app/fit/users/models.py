@@ -16,4 +16,17 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-   
+
+class Exercise(models.Model):
+    exercise_name = models.CharField(max_length=100)
+    calories_burned = models.PositiveIntegerField()
+    sets = models.PositiveIntegerField()
+    reps = models.PositiveIntegerField()
+    weight = models.PositiveIntegerField()
+    performed = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.exercise_name  

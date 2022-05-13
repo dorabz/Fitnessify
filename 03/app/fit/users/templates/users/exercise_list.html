@@ -1,0 +1,29 @@
+{% extends "users/base.html" %}
+{% load static %}
+{% block content %}
+{% block title %}
+<title>Physical activity</title>
+{% endblock  %}
+<div class="container p-5 my-3 border">
+
+    <legend class="border-bottom mb-4">My exercises</legend>
+    {% if user.is_authenticated %}
+    <a class="btn btn-outline-success" href="{% url 'exercise_create' %}">New exercise</a>
+    {% endif %}
+    <hr>
+    <ul class="list-group">
+      {% for exercise in exercises %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{exercise}}
+        <a class="btn btn-outline-info" href="{% url 'exercise_detail'  exercise.id %}">View details</a>
+      </li>
+      {% empty %}
+      <li>No exercises.</li>
+      {% endfor %}
+    </ul>
+</div>
+
+
+
+
+{% endblock %}

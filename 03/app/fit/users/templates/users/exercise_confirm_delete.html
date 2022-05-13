@@ -1,0 +1,20 @@
+{% extends "users/base.html" %}
+{% load static %}
+{% block content %}
+{% block title %}
+<title>Physical activity</title>
+{% endblock  %}
+<div class="container p-5 my-3 border">
+
+  <legend class="border-bottom mb-4">Confirm delete</legend>
+    <form method="post">
+      {% csrf_token %}
+      <p>Are you sure you want to delete "{{ object }}"?</p>
+      <input class="btn btn-outline-success" type="submit" value="Confirm" />
+    </form>
+</div>
+
+
+
+
+{% endblock %}

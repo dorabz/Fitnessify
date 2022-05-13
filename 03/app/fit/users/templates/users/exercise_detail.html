@@ -1,0 +1,30 @@
+{% extends "users/base.html" %}
+{% load static %}
+{% block content %}
+{% block title %}
+<title>Physical activity</title>
+{% endblock  %}
+<div class="container p-5 my-3 border">
+
+    <legend class="border-bottom mb-4">Exercise Detail</legend>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Name: {{exercise.exercise_name}}</li>
+      <li class="list-group-item">Calories burned: {{exercise.calories_burned}}</li>
+      <li class="list-group-item">Created: {{exercise.created|date}}</li>
+      <li class="list-group-item">Sets: {{exercise.sets}}</li>
+      <li class="list-group-item">Reps: {{ exercise.reps}}</li>
+      <li class="list-group-item">Weight: {{exercise.weight}}</li>
+    </ul>
+    
+    <hr>
+    {% if user == exercise.created_by %}
+    <a class="btn btn-outline-warning" href="{% url 'exercise_update' exercise.id %}">Edit</a>
+    <a class="btn btn-outline-danger" href="{% url 'exercise_delete' exercise.id %}">Delete</a>
+    {% endif %}
+    <a class="btn btn-outline-info" href="{% url 'exercise_list' %}">Back to exercise list</a>
+</div>
+
+
+
+
+{% endblock %}

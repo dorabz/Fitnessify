@@ -2,7 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import Profile
+from .models import Profile, Exercise
+
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.list import ListView
+from django.views.generic import DetailView
+
+from django.urls import reverse_lazy
 
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 
@@ -28,6 +34,7 @@ def home(request):
         return render(request,'users/home.html')
     else:
         return redirect('login')
+
 
 @login_required
 def myprofile(request):
@@ -68,3 +75,40 @@ def diet(request):
     else:
         return redirect('login')
 
+
+class ExerciseCreateView(CreateView):
+    model = Exercise
+    fields = ["exercise_name", "calories_burned", "sets", "reps", "weight"]
+    success_url = reverse_lazy("exercise_list") #problem
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
+
+class ExerciseListView(ListView):
+    model = Exercise
+    context_object_name = "exercises" # friendly queryset name for the template
+
+class ExerciseDetailView(DetailView):
+    model = Exercise
+    context_object_name = "exercise"
+
+
+class ExerciseUpdateView(UpdateView):
+    model = Exercise
+    fields = ["exercise_name", "calories_burned", "sets", "reps", "weight"]
+
+    def get_success_url(self):
+        return reverse_lazy("exercise_detail", kwargs={'pk': self.object.pk})
+
+    def test_func(self):
+        exercise = self.get_object()
+        return self.request.user == exercise.created_by
+
+class ExerciseDeleteView(DeleteView):
+    model = Exercise
+    success_url = reverse_lazy("exercise_list")
+
+    def test_func(self):
+        exercise = self.get_object()
+        return self.request.user == exercise.created_by

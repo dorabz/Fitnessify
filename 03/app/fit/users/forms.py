@@ -31,3 +31,4 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['name', 'last_name', 'email', 'age', 'calories_food', 'calories_exercise', 'bio']
+
