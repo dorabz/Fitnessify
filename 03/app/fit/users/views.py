@@ -91,8 +91,16 @@ class ExerciseListView(ListView):
     paginate_by = 10 
 
     def get_queryset(self):
-        user = self.request.user
-        return Exercise.objects.filter(created_by=user)
+        result = super(ExerciseListView, self).get_queryset()
+        query = self.request.GET.get('search')
+        if query:
+            postresult = Exercise.objects.filter(exercise_name__contains=query,created_by=self.request.user )
+            result = postresult
+        else:
+            result = Exercise.objects.filter(created_by=self.request.user)
+        return result
+        #user = self.request.user
+        #return Exercise.objects.filter(created_by=user)
 
 class ExerciseDetailView(DetailView):
     model = Exercise

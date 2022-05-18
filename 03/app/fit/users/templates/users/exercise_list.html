@@ -12,15 +12,14 @@
     {% endif %}
 
  <hr>
- <!-- ne radi search -->
-    <form action="{% url 'exercise_list' %}" method="get">
-      <input id="al-search" type="text"
-             name="name" value="{{ request.GET.exercise_name }}"
-             class="form-control" />
+
+    <form class="add_your_class" method="GET" action="" >
+      <input type="search" name="search" class="form-control" placeholder="Search" > 
       <br>
-      <input type="submit"
-             value="Search" class="btn btn-info" />
-    </form>
+      <button class="btn btn-info" type="submit"> Search </button>
+  </form>
+   
+
   <hr>
     <ul class="list-group">
       {% for exercise in exercises %}
@@ -52,8 +51,7 @@
         </li>
         {% endif %}
       </ul>
-      {% else %}
-       <li>No exercises.</li>
+
       {% endif %}
     </nav>
 </div>
