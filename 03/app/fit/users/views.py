@@ -88,6 +88,11 @@ class ExerciseCreateView(CreateView):
 class ExerciseListView(ListView):
     model = Exercise
     context_object_name = "exercises" # friendly queryset name for the template
+    paginate_by = 10 
+
+    def get_queryset(self):
+        user = self.request.user
+        return Exercise.objects.filter(created_by=user)
 
 class ExerciseDetailView(DetailView):
     model = Exercise

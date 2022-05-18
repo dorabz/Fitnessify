@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.forms import ValidationError
 # Create your models here.
 
 class Profile(models.Model):
@@ -30,3 +31,12 @@ class Exercise(models.Model):
 
     def __str__(self):
         return self.exercise_name  
+
+    def clean(self):
+        errors={}
+        if self.calories_burned  is not None:
+            magic_formula = self.sets*self.reps*self.weight*0.5
+            if (self.calories_burned <= magic_formula):
+                errors['calories_burned'] = ('Calories burned can not be smaller number than predicted calories burned for parameters: sets, reps, weight and factor. ')
+        if errors:
+            raise ValidationError(errors)
