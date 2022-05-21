@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import Profile, Exercise
+from .models import *
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
@@ -10,7 +10,7 @@ from django.views.generic import DetailView
 
 from django.urls import reverse_lazy
 
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, RecipeForm, IngredientFormSet
 
 # Create your views here.
 
@@ -125,3 +125,36 @@ class ExerciseDeleteView(DeleteView):
     def test_func(self):
         exercise = self.get_object()
         return self.request.user == exercise.created_by
+
+class RecipeListView(ListView):
+    model = Recipe
+    context_object_name = "recipes" # friendly queryset name for the template
+    paginate_by = 10 
+
+    def get_queryset(self):
+        result = super(RecipeListView, self).get_queryset()
+        query = self.request.GET.get('search')
+        if query:
+            postresult = Recipe.objects.filter(recipe_name__contains=query,created_by=self.request.user )
+            result = postresult
+        else:
+            result = Recipe.objects.filter(created_by=self.request.user)
+        return result
+
+class RecipeCreateView(CreateView):
+    model = Recipe
+    template_name = 'users/recipe_form.html'
+    form_class = RecipeForm
+    success_url = reverse_lazy("recipe_list")
+
+    def get_context_data(self, **kwargs):
+        data = super(RecipeCreateView, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['ingredients'] = IngredientFormSet(self.request.POST)
+        else:
+            data['ingredients'] = IngredientFormSet()
+        return data
+    
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)

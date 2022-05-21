@@ -40,3 +40,20 @@ class Exercise(models.Model):
                 errors['calories_burned'] = ('Calories burned can not be smaller number than predicted calories burned for parameters: sets, reps, weight and factor. ')
         if errors:
             raise ValidationError(errors)
+    
+class Recipe(models.Model):
+    recipe_name = models.CharField(max_length=100)
+    recipe_description = models.CharField(max_length=1000)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.recipe_name
+
+class Ingredient(models.Model):
+    ingredient_name = models.CharField(max_length=100)
+    ingredient_calories = models.PositiveIntegerField()
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    # created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.ingredient_name

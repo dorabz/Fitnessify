@@ -1,0 +1,9 @@
+pip install -r requirements.txt
+
+create database Fitnessify in postgres
+
+restart postgres
+
+python manage.py migrate
+
+python manage.py runserver

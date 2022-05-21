@@ -1,3 +1,6 @@
 # General
 .DS_Store
 
+03/app/fit/users/migrations
+03/app/fit/fit/__pycache__
+03/app/fit/users/__pycache__
