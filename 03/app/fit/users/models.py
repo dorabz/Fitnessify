@@ -30,8 +30,8 @@ class Exercise(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.exercise_name  
-
+        return self.exercise_name
+      
     def clean(self):
         errors={}
         if self.calories_burned  is not None:
