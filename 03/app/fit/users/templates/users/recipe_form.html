@@ -6,6 +6,8 @@
 	<form method="POST">
 		{% csrf_token %}
 		{{ form.as_p}}
+        
+        {{ingredient.errors}}
 		
 		<table class="table form-table table-bordered table-sm">
                             <thead class="text-center">

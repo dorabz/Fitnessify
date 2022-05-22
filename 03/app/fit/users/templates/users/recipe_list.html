@@ -26,12 +26,14 @@
       {% for recipe in recipes %}
       <li class="list-group-item d-flex justify-content-between align-items-center">
         {{recipe}}
-        <a class="btn btn-outline-info float-right" href="{% url 'recipe_update'  recipe.id %}">Edit</a>
+        <div class="row">
+        <a class="btn btn-outline-info float-right" href="{% url 'recipe_update'  recipe.id %}" style="margin-right:8px">Edit</a>
         <form action="{% url 'recipe_delete' recipe.id %}" method="POST">
           {% csrf_token %}
           <input class="btn btn-default btn-danger" type="submit" value="Delete"/>
         </form>
-        <a id="recipe_details-{{ recipe.id }}" class="btn btn-outline-info float-right">View details</a>
+        <a id="recipe_details-{{ recipe.id }}" class="btn btn-outline-info float-right" style="margin-left:8px">View details</a>
+      </div>
       </li>
       <div id="show_details-{{ recipe.id }}" class="container p-5 my-3 border"  style="display: none;">
         <ul class="list-group">

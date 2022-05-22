@@ -166,6 +166,7 @@ def update(request, pk):
                     obj.save()
                 for element in formset.changed_objects:
                     element.save()
+                instance.save()
             except:
                 pass
 
@@ -193,7 +194,6 @@ def create(request):
                     recipe = form.save(commit=False)
                     recipe.save()
 
-                    # print(formset)
                     for ingredient in formset:
                         data = ingredient.save(commit=False)
                         data.recipe = recipe
@@ -202,6 +202,8 @@ def create(request):
                 print(exc)
 
             return redirect('recipe_list')
+        else:
+            messages.warning(request, f'Please input valid calories!')
 
     context['formset'] = formset
     context['form'] = form
