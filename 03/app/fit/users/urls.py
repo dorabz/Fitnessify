@@ -20,9 +20,9 @@ urlpatterns = [
     path("recipes/<int:pk>/update/", login_required(views.update), name="recipe_update"),
     path("recipes/<int:pk>/delete/", login_required(views.recipe_delete), name="recipe_delete"),
     
-    path("ingredients/", login_required(views.IngredientListView.as_view()), name="ingredient_list"),
+    # path("ingredients/", login_required(views.IngredientListView.as_view()), name="ingredient_list"),
     path("ingredient/create", login_required(views.IngredientCreateView.as_view()), name="ingredient_create"),
-    path("ingredient/<int:pk>/detail/", login_required(views.IngredientDetailView.as_view()), name="ingredient_detail"),
-    path("ingredient/<int:pk>/update/", login_required(views.IngredientUpdateView.as_view()), name="ingredient_update"),
-    path("ingredient/<int:pk>/delete/", login_required(views.ingredient_delete), name="ingredient_delete"),
+    # path("ingredient/<int:pk>/detail/", login_required(views.IngredientDetailView.as_view()), name="ingredient_detail"),
+    # path("ingredient/<int:pk>/update/", login_required(views.IngredientUpdateView.as_view()), name="ingredient_update"),
+    # path("ingredient/<int:pk>/delete/", login_required(views.ingredient_delete), name="ingredient_delete"),
 ]

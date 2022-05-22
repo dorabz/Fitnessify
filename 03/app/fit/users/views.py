@@ -159,17 +159,20 @@ def update(request, pk):
     
     if request.method == "POST":
         formset = IngredientsFormset(request.POST, queryset= Ingredient.objects.filter(recipe=recipe))
-        print(formset)
-        if form.is_valid():# and formset.is_valid():
+        # print(formset)
+        if True:#form.is_valid():# and formset.is_valid():
             form.save()
-            instance = formset.save(commit=False)
-            for obj in formset.deleted_objects:
-                obj.delete()
-            for obj in formset.new_objects:
-                obj.recipe = recipe
-                obj.save()
-            for element in formset.changed_objects:
-                element.save()
+            try:
+                instance = formset.save(commit=False)
+                for obj in formset.deleted_objects:
+                    obj.delete()
+                for obj in formset.new_objects:
+                    obj.recipe = recipe
+                    obj.save()
+                for element in formset.changed_objects:
+                    element.save()
+            except:
+                pass
 
             return redirect('recipe_list')
         
@@ -195,7 +198,7 @@ def create(request):
                     recipe = form.save(commit=False)
                     recipe.save()
 
-                    print(formset)
+                    # print(formset)
                     for ingredient in formset:
                         data = ingredient.save(commit=False)
                         data.recipe = recipe
@@ -216,55 +219,48 @@ def recipe_delete(request, pk):
     return redirect('recipe_list')
 
 
-def diet(request):
-    if request.user.is_authenticated:
-        return render(request,'users/diet.html')
-    else:
-        return redirect('login')
-
-
 class IngredientCreateView(CreateView):
     model = Ingredient
     fields = ["ingredient_name", "ingredient_calories", "ingredient_nutrients", 'recipe']
-    success_url = reverse_lazy("ingredient_list")
+    success_url = reverse_lazy('recipe_list')
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
 
-class IngredientListView(ListView):
-    model = Ingredient
-    template_name = 'users/ingredient_list.html'
-    context_object_name = "ingredients" # friendly queryset name for the template
-    paginate_by = 10 
+# class IngredientListView(ListView):
+#     model = Ingredient
+#     template_name = 'users/ingredient_list.html'
+#     context_object_name = "ingredients" # friendly queryset name for the template
+#     paginate_by = 10 
 
-    def get_queryset(self):
-        result = super(IngredientListView, self).get_queryset()
-        query = self.request.GET.get('search')
-        if query:
-            postresult = Ingredient.objects.filter(ingredient_name__contains=query,created_by=self.request.user )
-            result = postresult
-        else:
-            result = Ingredient.objects.filter(created_by=self.request.user)
-        return result
+#     def get_queryset(self):
+#         result = super(IngredientListView, self).get_queryset()
+#         query = self.request.GET.get('search')
+#         if query:
+#             postresult = Ingredient.objects.filter(ingredient_name__contains=query,created_by=self.request.user )
+#             result = postresult
+#         else:
+#             result = Ingredient.objects.filter(created_by=self.request.user)
+#         return result
 
-class IngredientDetailView(DetailView):
-    model = Ingredient
-    context_object_name = "ingredient"
+# class IngredientDetailView(DetailView):
+#     model = Ingredient
+#     context_object_name = "ingredient"
 
-def ingredient_delete(request, pk):
-    obj = Ingredient.objects.get(id=pk)
-    obj.delete()
-    return redirect('ingredient_list')
+# def ingredient_delete(request, pk):
+#     obj = Ingredient.objects.get(id=pk)
+#     obj.delete()
+#     return redirect('ingredient_list')
 
 
-class IngredientUpdateView(UpdateView):
-    model = Ingredient
-    fields = ["ingredient_name", "ingredient_calories", "ingredient_nutrients", "recipe"]
+# class IngredientUpdateView(UpdateView):
+#     model = Ingredient
+#     fields = ["ingredient_name", "ingredient_calories", "ingredient_nutrients", "recipe"]
 
-    def get_success_url(self):
-        return reverse_lazy("ingredient_detail", kwargs={'pk': self.object.pk})
+#     def get_success_url(self):
+#         return reverse_lazy("ingredient_detail", kwargs={'pk': self.object.pk})
 
-    def test_func(self):
-        ingredient = self.get_object()
-        return self.request.user == ingredient.created_by
+#     def test_func(self):
+#         ingredient = self.get_object()
+#         return self.request.user == ingredient.created_by
