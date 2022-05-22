@@ -1,22 +1,17 @@
-from dataclasses import fields
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.views.generic.detail import SingleObjectMixin
-from django.contrib import messages
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-from django.forms.models import inlineformset_factory, modelformset_factory
+from django.forms.models import modelformset_factory
 
 from .models import *
+from .forms import *
 
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views.generic import DetailView
 
 from django.urls import reverse_lazy
 
-from .forms import *
 from django.db import transaction, IntegrityError
 
 # Create your views here.
