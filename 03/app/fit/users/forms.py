@@ -43,8 +43,11 @@ class RecipeForm(forms.ModelForm):
         model = Recipe
         fields = ['recipe_name', 'recipe_description', 'calories', 'nutrients', 'prep_time']
     
-    def isValid(self):
-        return True
+    def is_valid(self):
+        calories = 0
+        for i in range(int(self.data['ingredient-TOTAL_FORMS'])):
+            calories += int(self.data[f'ingredient-{i}-ingredient_calories'])
+        return calories <= int(self.data['calories'])
 
 
 class IngredientForm(forms.ModelForm):

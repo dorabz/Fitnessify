@@ -9,7 +9,6 @@ urlpatterns = [
     path('', views.home, name='homepage'),
     path("myprofile", views.myprofile, name="My Profile"),
     #path("physical", views.physical, name="physical"),
-    path("diet", views.diet, name="Diet"),
     path("create/", login_required(views.ExerciseCreateView.as_view()), name="exercise_create"),
     path("physical", login_required(views.ExerciseListView.as_view()), name="exercise_list"),
     path("<int:pk>/", login_required(views.ExerciseDetailView.as_view()), name="exercise_detail"),

@@ -9,6 +9,7 @@
     <legend class="border-bottom mb-4">My recipes</legend>
     {% if user.is_authenticated %}
     <a class="btn btn-outline-success" href="{% url 'recipe_create' %}">New recipe</a>
+    <a class="btn btn-outline-success" href="{% url 'ingredient_create' %}">New ingredient</a>
     {% endif %}
 
  <hr>
