@@ -63,6 +63,7 @@ class IngredientForm(forms.ModelForm):
         model = Ingredient
         fields = ['ingredient_name', 'ingredient_calories', 'ingredient_nutrients']
 
+
 IngredientFormSet = inlineformset_factory(
     Recipe, Ingredient, fields=('ingredient_name', 'ingredient_calories', 'ingredient_nutrients'), extra=0
 )

@@ -112,38 +112,6 @@
         console.log((row_id))
         $("[id=" + row_id + "]:checkbox").attr('checked', true);
         $("#" + row_id).parent().parent().toggle()
-        {% comment %} var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
-        if (formCount > 1) {
-            // Delete the item/form
-            var goto_id = $(btn).find('input').val();
-            if( goto_id ){
-                $.ajax({
-                    url: "/" + window.location.pathname.split("/")[1] + "/formset-data-delete/"+ goto_id +"/?next="+ window.location.pathname,
-                    error: function () {
-                    console.log("error");
-                    },
-                    success: function (data) {
-                    $(btn).parents('.item').hide();                 
-                    },
-                    type: 'GET'
-                });
-            }else{
-                $(btn).parents('.item').hide();
-            }
-
-            var forms = $('.item'); // Get all the forms
-            // Update the total number of forms (1 less than before)
-            $('#id_' + prefix +  + '-DELETE').val(forms.length);
-            var i = 0;
-            // Go through the forms and set their indices, names and IDs
-             for (formCount = forms.length; i < formCount; i++) {
-                $(forms.get(i)).find('.formset-field').each(function () {
-                    updateElementIndex(this, prefix, i);
-                });
-            }
-        } // End if {% endcomment %}
-
-        return false;
     }
 
     $("body").on('click', '.remove-form-row',function () {

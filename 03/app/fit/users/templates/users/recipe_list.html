@@ -85,9 +85,6 @@
 <script type="text/javascript">
     $(document).ready(
     function(){
-        {% comment %} $("#recipe_details").click(function () {
-            $("#show_details").toggle();
-        }); {% endcomment %}
         $('[id^="recipe_details"]').on('click', function() {
             $("#show_details-" + this.id.split("-")[1]).toggle();
         });
