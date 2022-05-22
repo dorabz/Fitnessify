@@ -149,33 +149,27 @@ class RecipeListView(ListView):
         else:
             result = Recipe.objects.filter(created_by=self.request.user)
         return result
-
+    
 
 def update(request, pk):
     context = {}
     recipe = Recipe.objects.get(pk=pk)
-    # IngredientsFormset = inlineformset_factory(Recipe, Ingredient, fields=('ingredient_name', 'ingredient_calories', 'ingredient_nutrients'), extra=0)
     form = RecipeForm(request.POST or None, instance=recipe)
-    IngredientsFormset = modelformset_factory(Ingredient, fields=('ingredient_name', 'ingredient_calories', 'ingredient_nutrients'), extra=0, can_delete=True)	
-    # form = RecipeForm(request.POST or None)
-    # formset = IngredientsFormset(queryset= Ingredient.objects.filter(recipe=recipe), prefix='ingredient')
+    IngredientsFormset = modelformset_factory(Ingredient, fields=('ingredient_name', 'ingredient_calories', 'ingredient_nutrients'), extra=0, can_delete=True)
     
     if request.method == "POST":
         formset = IngredientsFormset(request.POST, queryset= Ingredient.objects.filter(recipe=recipe))
         print(formset)
-        if form.is_valid() and formset.is_valid():
-            print("isvalid")
+        if form.is_valid():# and formset.is_valid():
             form.save()
             instance = formset.save(commit=False)
             for obj in formset.deleted_objects:
                 obj.delete()
             for obj in formset.new_objects:
-                inn = obj.save(commit=False)
-                inn.recipe = pk
-                inn.save()
-            instance.save()
-            # for element in instance:
-            #     element.save()
+                obj.recipe = recipe
+                obj.save()
+            for element in formset.changed_objects:
+                element.save()
 
             return redirect('recipe_list')
         
