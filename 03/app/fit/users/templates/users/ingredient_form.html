@@ -1,0 +1,19 @@
+{% extends "users/base.html" %}
+{% load static %}
+{% block content %}
+{% block title %}
+<title>Diet: Ingredients</title>
+{% endblock  %}
+<div class="container p-5 my-3 border">
+
+  <legend class="border-bottom mb-4">Create ingredient</legend>
+  <form method="POST">
+    {% csrf_token %} {{form.as_p}}
+    <input type="submit" value="Save" class="btn btn-outline-success"  />
+  </form>
+</div>
+
+
+
+
+{% endblock %}

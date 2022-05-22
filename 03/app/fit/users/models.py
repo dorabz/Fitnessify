@@ -56,8 +56,9 @@ class Recipe(models.Model):
 class Ingredient(models.Model):
     ingredient_name = models.CharField(max_length=100)
     ingredient_calories = models.PositiveIntegerField()
-    ingredient_nutrients = models.CharField(max_length=200, default="protein:13g")
+    ingredient_nutrients = models.CharField(max_length=200)
     recipe = models.ForeignKey('Recipe', null=False, on_delete=models.CASCADE, related_name='ingredient_recipe')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, default=User.objects.get(username='admin').pk)
 
     def __str__(self):
         return self.ingredient_name

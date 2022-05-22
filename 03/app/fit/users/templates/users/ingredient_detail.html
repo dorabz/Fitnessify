@@ -1,0 +1,28 @@
+{% extends "users/base.html" %}
+{% load static %}
+{% block content %}
+{% block title %}
+<title>Ingredient</title>
+{% endblock  %}
+<div class="container p-5 my-3 border">
+
+    <legend class="border-bottom mb-4">Ingredient Detail</legend>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Name: {{ingredient.ingredient_name}}</li>
+      <li class="list-group-item">Calories: {{ingredient.ingredient_calories}}</li>
+      <li class="list-group-item">Nutrients: {{ingredient.ingredient_nutrients}}</li>
+      <li class="list-group-item">Recipe: {{ingredient.recipe}}</li>
+    </ul>
+    
+    <hr>
+    {% if user == ingredient.created_by %}
+    <a class="btn btn-outline-warning" href="{% url 'ingredient_update' ingredient.id %}">Edit</a>
+    <a class="btn btn-outline-danger" href="{% url 'ingredient_delete' ingredient.id %}">Delete</a>
+    {% endif %}
+    <a class="btn btn-outline-info" href="{% url 'ingredient_list' %}">Back to ingredient list</a>
+</div>
+
+
+
+
+{% endblock %}

@@ -42,15 +42,16 @@ class RecipeForm(forms.ModelForm):
     class Meta:
         model = Recipe
         fields = ['recipe_name', 'recipe_description', 'calories', 'nutrients', 'prep_time']
+    
+    def isValid(self):
+        return True
 
 
 class IngredientForm(forms.ModelForm):
     class Meta:
         model = Ingredient
-        fields = ['ingredient_name', 'ingredient_calories', 'ingredient_nutrients']
-
+        fields = ['ingredient_name', 'ingredient_calories', 'ingredient_nutrients', 'created_by']
 
 IngredientFormSet = inlineformset_factory(
-    Recipe, Ingredient,
-    fields=('ingredient_name', 'ingredient_calories', 'ingredient_nutrients',)
+    Recipe, Ingredient, fields=('ingredient_name', 'ingredient_calories', 'ingredient_nutrients', 'created_by'), extra=0
 )

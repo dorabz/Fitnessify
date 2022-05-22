@@ -28,16 +28,16 @@
                                     <td class="formset-field">
                                     	{{ form_data.ingredient_nutrients }}
                                     </td>
-                                    <td>
+                                    {% comment %} <td>
                                         <button type="button" class="btn btn-danger btn-sm remove-form-row"
                                                 id="{{ formset.prefix }}">
                                           
                                             Delete
                                         </button>
-                                    </td>
+                                    </td> {% endcomment %}
                                 </tr>
                             {% endfor %}
-                            <tr>
+                            {% comment %} <tr>
                                 <td colspan="9"
                                     style="border-left: none!important; border-right: none !important; border-bottom: none!important;">
                                     <button type="button" class="btn btn-sm btn-success add-form-row"
@@ -45,7 +45,7 @@
                                        Add
                                     </button>
                                 </td>
-                            </tr>
+                            </tr> {% endcomment %}
                             </tbody>
                         </table>
                         {{ formset.management_form }}
@@ -59,10 +59,14 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript">
     function updateElementIndex(el, prefix, ndx) {
-        var old = $(el).attr("id").split("-")[2]
-        var replacement = prefix + '-' + ndx + '-' + old;
-        $(el).attr("id", replacement)
-        $(el).attr("name", replacement)
+        try {
+            var old = $(el).attr("id").split("-")[2]
+            var replacement = prefix + '-' + ndx + '-' + old;
+            $(el).attr("id", replacement)
+            $(el).attr("name", replacement)
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     function addForm(btn, prefix) {

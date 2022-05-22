@@ -5,39 +5,155 @@
 <title>Recipe edit</title>
 {% endblock  %}
 <div class="container p-5 my-3 border">
-<form action="" method="post" enctype="multipart/form-data">
-
-    {% for hidden in form.hidden_fields %}
-        {{hidden_field.errors}}
-        {{ hidden_field }}
-    {% endfor %}
-
-    {% csrf_token %}
-
-    <p class="h3">{{ recipe.recipe_name }}</p>
-    <br>
-    
-    {{ form.management_form }}
-    {{ form.non_form_errors }}
-
-    
-
-    {% for ingredient_form in form.forms %}
-
-        {% for hidden_field in ingredient_form.hidden_fields %}
-            {{ hidden_field.errors }}
+    <form method="POST">
+		{% csrf_token %}
+		{{ form.as_p}}
+		
+    <table class="table form-table table-bordered table-sm">
+        <thead class="text-center">
+        <tr>
+            <th>Ingredient Name</th>
+            <th>Calories</th>
+            <th>Nutrients</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for form_data in formset %}
+            <tr class="item">
+                <td class="formset-field">
+                    {{ form_data.ingredient_name }}
+                </td>
+                <td class="formset-field">
+                    {{ form_data.ingredient_calories }}
+                </td>
+                <td class="formset-field">
+                    {{ form_data.ingredient_nutrients }}
+                </td>
+                <td>{{form_data.DELETE}}</td>
+                
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-form-row"
+                            id="{{ formset.prefix }}">
+                      
+                        Delete
+                    </button>
+                </td>
+            </tr>
         {% endfor %}
-        <table>
-            {{ ingredient_form.as_table }}
-        </table>
+        <tr>
+            <td colspan="9"
+                style="border-left: none!important; border-right: none !important; border-bottom: none!important;">
+                <button type="button" class="btn btn-sm btn-success add-form-row"
+                        id="{{ formset.prefix }}">
+                   Add
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    {{ formset.management_form }}
 
-        <br>
-    {% endfor %}
-    <p>
-        <button type="submit" value="Update recipe" class="btn btn-primary w-100 mb-3">Update recipe</button>
-        <a href="{% url 'recipe_list' %}" role="button" class="btn btm-secondary w-100">Cancel</a>
-    </p>
-
+<button type="submit" class="btn btn-primary w-100 mb-3">Create Recipe</button>
+<a href="{% url 'recipe_list' %}" role="button" class="btn btm-secondary w-100">Cancel</a>
 </form>
 </div>
-{% endblock  %}
+
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function updateElementIndex(el, prefix, ndx) {
+        try{
+            if ($(el).attr("id") !== undefined) {
+                var old = $(el).attr("id").split("-")[2]
+            }
+            var replacement = prefix + '-' + ndx + '-' + old;
+            $(el).attr("id", replacement)
+            $(el).attr("name", replacement)
+        } catch (err) {
+            console.log("err deleting")
+        }
+    }
+
+    function addForm(btn, prefix) {
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (formCount < 1000) {
+            // Clone a form (without event handlers) from the first form
+            var row = $(".item:last").clone(false).get(0);
+
+            // Insert it after the last form
+            $(row).removeAttr('id').hide().insertAfter(".item:last");//.slideDown(300);
+
+            // Remove the bits we don't want in the new row/form
+            // e.g. error messages
+            $(".errorlist", row).remove();
+            $(row).children().removeClass("error");
+
+            // Relabel or rename all the relevant bits
+            $(row).find('.formset-field').each(function () {
+                var input_field = $(this).children('input')[0];
+                updateElementIndex(input_field, prefix, formCount);
+                $(input_field).val('');
+                $(input_field).removeAttr('value');
+                $(input_field).prop('checked', false);
+            });
+            // Update the total form count
+            $("#id_" + prefix + "-TOTAL_FORMS").val(formCount + 1);
+
+            $(row).show().css("background-color", "white");
+
+        } // End if
+
+        return true;
+    }
+
+
+    function deleteForm(btn, prefix, row_id) {
+        console.log((row_id))
+        $("[id=" + row_id + "]:checkbox").attr('checked', true);
+        $("#" + row_id).parent().parent().toggle()
+        {% comment %} var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (formCount > 1) {
+            // Delete the item/form
+            var goto_id = $(btn).find('input').val();
+            if( goto_id ){
+                $.ajax({
+                    url: "/" + window.location.pathname.split("/")[1] + "/formset-data-delete/"+ goto_id +"/?next="+ window.location.pathname,
+                    error: function () {
+                    console.log("error");
+                    },
+                    success: function (data) {
+                    $(btn).parents('.item').hide();                 
+                    },
+                    type: 'GET'
+                });
+            }else{
+                $(btn).parents('.item').hide();
+            }
+
+            var forms = $('.item'); // Get all the forms
+            // Update the total number of forms (1 less than before)
+            $('#id_' + prefix +  + '-DELETE').val(forms.length);
+            var i = 0;
+            // Go through the forms and set their indices, names and IDs
+             for (formCount = forms.length; i < formCount; i++) {
+                $(forms.get(i)).find('.formset-field').each(function () {
+                    updateElementIndex(this, prefix, i);
+                });
+            }
+        } // End if {% endcomment %}
+
+        return false;
+    }
+
+    $("body").on('click', '.remove-form-row',function () {
+        deleteForm($(this), String($('.add-form-row').attr('id')), String($($(this).parent().prev().children()[0]).attr('id')));
+    });
+
+
+    $("body").on('click', '.add-form-row',function () {
+        return addForm($(this), String($(this).attr('id')));
+    });
+</script>
+{% endblock%}
+{% endblock %}
