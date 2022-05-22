@@ -7,7 +7,7 @@
 <div class="container p-5 my-3 border">
     <form method="POST">
 		{% csrf_token %}
-		{{ form.as_p}}
+		{{ ingredient.as_p}}
 		
     <table class="table form-table table-bordered table-sm">
         <thead class="text-center">
@@ -54,7 +54,7 @@
     </table>
     {{ formset.management_form }}
 
-<button type="submit" class="btn btn-primary w-100 mb-3">Create Recipe</button>
+<button type="submit" class="btn btn-primary w-100 mb-3">Update Recipe</button>
 <a href="{% url 'recipe_list' %}" role="button" class="btn btm-secondary w-100">Cancel</a>
 </form>
 </div>

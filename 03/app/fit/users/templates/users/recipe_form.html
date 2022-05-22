@@ -28,16 +28,16 @@
                                     <td class="formset-field">
                                     	{{ form_data.ingredient_nutrients }}
                                     </td>
-                                    {% comment %} <td>
+                                    <td>
                                         <button type="button" class="btn btn-danger btn-sm remove-form-row"
                                                 id="{{ formset.prefix }}">
                                           
                                             Delete
                                         </button>
-                                    </td> {% endcomment %}
+                                    </td>
                                 </tr>
                             {% endfor %}
-                            {% comment %} <tr>
+                             <tr>
                                 <td colspan="9"
                                     style="border-left: none!important; border-right: none !important; border-bottom: none!important;">
                                     <button type="button" class="btn btn-sm btn-success add-form-row"
@@ -45,7 +45,7 @@
                                        Add
                                     </button>
                                 </td>
-                            </tr> {% endcomment %}
+                            </tr>
                             </tbody>
                         </table>
                         {{ formset.management_form }}

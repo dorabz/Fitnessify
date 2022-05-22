@@ -154,27 +154,36 @@ class RecipeListView(ListView):
 def update(request, pk):
     context = {}
     recipe = Recipe.objects.get(pk=pk)
-    IngredientsFormset = inlineformset_factory(Recipe, Ingredient, fields=('ingredient_name', 'ingredient_calories', 'ingredient_nutrients'), extra=0)
+    # IngredientsFormset = inlineformset_factory(Recipe, Ingredient, fields=('ingredient_name', 'ingredient_calories', 'ingredient_nutrients'), extra=0)
     form = RecipeForm(request.POST or None, instance=recipe)
+    IngredientsFormset = modelformset_factory(Ingredient, fields=('ingredient_name', 'ingredient_calories', 'ingredient_nutrients'), extra=0, can_delete=True)	
+    # form = RecipeForm(request.POST or None)
+    # formset = IngredientsFormset(queryset= Ingredient.objects.filter(recipe=recipe), prefix='ingredient')
     
     if request.method == "POST":
-        formset = IngredientsFormset(request.POST, request.FILES, instance=recipe)
-        if form.is_valid():# and formset.is_valid():
+        formset = IngredientsFormset(request.POST, queryset= Ingredient.objects.filter(recipe=recipe))
+        print(formset)
+        if form.is_valid() and formset.is_valid():
+            print("isvalid")
             form.save()
             instance = formset.save(commit=False)
             for obj in formset.deleted_objects:
                 obj.delete()
-            for element in instance:
-                element.created_by = request.user
-                element.save()
+            for obj in formset.new_objects:
+                inn = obj.save(commit=False)
+                inn.recipe = pk
+                inn.save()
+            instance.save()
+            # for element in instance:
+            #     element.save()
 
             return redirect('recipe_list')
         
     else:
-        formset = IngredientsFormset(instance=recipe)
+        formset = IngredientsFormset(queryset= Ingredient.objects.filter(recipe=recipe))
         
     context['formset'] = formset
-    context['form'] = form
+    context['ingredient'] = form
     return render(request, 'users/recipe_update.html', context)
 
 
@@ -192,10 +201,10 @@ def create(request):
                     recipe = form.save(commit=False)
                     recipe.save()
 
+                    print(formset)
                     for ingredient in formset:
                         data = ingredient.save(commit=False)
                         data.recipe = recipe
-                        data.created_by = request.user
                         data.save()
             except IntegrityError as exc:
                 print(exc)
