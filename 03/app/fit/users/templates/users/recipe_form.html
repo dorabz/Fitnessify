@@ -1,14 +1,146 @@
-{% extends "users/base.html" %}
-{% load crispy_forms_tags %}
+{% extends 'users/base.html' %}
+{% load static %}
+
 {% block content %}
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            Create recipe
-        </div>
-        <div class="card-body">
-             {% crispy form %}
-        </div>
-    </div>
+<div class="container p-5 my-3 border">
+	<form method="POST">
+		{% csrf_token %}
+		{{ form.as_p}}
+		
+		<table class="table form-table table-bordered table-sm">
+                            <thead class="text-center">
+                            <tr>
+                                <th>Ingredient Name</th>
+                                <th>Calories</th>
+                                <th>Nutrients</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for form_data in formset %}
+                                <tr class="item">
+                                    <td class="formset-field">
+                                        {{ form_data.ingredient_name }}
+                                    </td>
+                                    <td class="formset-field">
+                                        {{ form_data.ingredient_calories }}
+                                    </td>
+                                    <td class="formset-field">
+                                    	{{ form_data.ingredient_nutrients }}
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm remove-form-row"
+                                                id="{{ formset.prefix }}">
+                                          
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td colspan="9"
+                                    style="border-left: none!important; border-right: none !important; border-bottom: none!important;">
+                                    <button type="button" class="btn btn-sm btn-success add-form-row"
+                                            id="{{ formset.prefix }}">
+                                       Add
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        {{ formset.management_form }}
+
+		<button type="submit" class="btn btn-primary w-100 mb-3">Create Recipe</button>
+        <a href="{% url 'recipe_list' %}" role="button" class="btn btm-secondary w-100">Cancel</a>
+	</form>
 </div>
-{% endblock content %}
+    
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function updateElementIndex(el, prefix, ndx) {
+        var old = $(el).attr("id").split("-")[2]
+        var replacement = prefix + '-' + ndx + '-' + old;
+        $(el).attr("id", replacement)
+        $(el).attr("name", replacement)
+    }
+
+    function addForm(btn, prefix) {
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (formCount < 1000) {
+            // Clone a form (without event handlers) from the first form
+            var row = $(".item:last").clone(false).get(0);
+
+            // Insert it after the last form
+            $(row).removeAttr('id').hide().insertAfter(".item:last");//.slideDown(300);
+
+            // Remove the bits we don't want in the new row/form
+            // e.g. error messages
+            $(".errorlist", row).remove();
+            $(row).children().removeClass("error");
+
+            // Relabel or rename all the relevant bits
+            $(row).find('.formset-field').each(function () {
+                var input_field = $(this).children('input')[0];
+                updateElementIndex(input_field, prefix, formCount);
+                $(input_field).val('');
+                $(input_field).removeAttr('value');
+                $(input_field).prop('checked', false);
+            });
+            // Update the total form count
+            $("#id_" + prefix + "-TOTAL_FORMS").val(formCount + 1);
+
+            $(row).show().css("background-color", "white");
+
+        } // End if
+
+        return true;
+    }
+
+
+    function deleteForm(btn, prefix) {
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (formCount > 1) {
+            // Delete the item/form
+            var goto_id = $(btn).find('input').val();
+            if( goto_id ){
+                $.ajax({
+                    url: "/" + window.location.pathname.split("/")[1] + "/formset-data-delete/"+ goto_id +"/?next="+ window.location.pathname,
+                    error: function () {
+                    console.log("error");
+                    },
+                    success: function (data) {
+                    $(btn).parents('.item').remove();                 
+                    },
+                    type: 'GET'
+                });
+            }else{
+                $(btn).parents('.item').remove();
+            }
+
+            var forms = $('.item'); // Get all the forms
+            // Update the total number of forms (1 less than before)
+            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+            var i = 0;
+            // Go through the forms and set their indices, names and IDs
+            for (formCount = forms.length; i < formCount; i++) {
+                $(forms.get(i)).find('.formset-field').each(function () {
+                    updateElementIndex(this, prefix, i);
+                });
+            }
+        } // End if
+
+        return false;
+    }
+
+    $("body").on('click', '.remove-form-row',function () {
+        deleteForm($(this), String($('.add-form-row').attr('id')));
+    });
+
+
+    $("body").on('click', '.add-form-row',function () {
+        return addForm($(this), String($(this).attr('id')));
+    });
+</script>
+{% endblock%}
+{% endblock %}

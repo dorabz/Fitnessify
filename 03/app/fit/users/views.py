@@ -1,16 +1,22 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.views.generic.detail import SingleObjectMixin
+from django.contrib import messages
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+from django.forms.models import inlineformset_factory, modelformset_factory
 
 from .models import *
 
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.views.generic.list import ListView
 from django.views.generic import DetailView
 
 from django.urls import reverse_lazy
 
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, RecipeForm, IngredientFormSet
+from .forms import *
+from django.db import transaction, IntegrityError
 
 # Create your views here.
 
@@ -126,9 +132,11 @@ class ExerciseDeleteView(DeleteView):
         exercise = self.get_object()
         return self.request.user == exercise.created_by
 
+
 class RecipeListView(ListView):
     model = Recipe
     context_object_name = "recipes" # friendly queryset name for the template
+    template_name = 'users/recipe_list.html'
     paginate_by = 10 
 
     def get_queryset(self):
@@ -141,20 +149,58 @@ class RecipeListView(ListView):
             result = Recipe.objects.filter(created_by=self.request.user)
         return result
 
-class RecipeCreateView(CreateView):
-    model = Recipe
-    template_name = 'users/recipe_form.html'
-    form_class = RecipeForm
-    success_url = reverse_lazy("recipe_list")
 
-    def get_context_data(self, **kwargs):
-        data = super(RecipeCreateView, self).get_context_data(**kwargs)
-        if self.request.POST:
-            data['ingredients'] = IngredientFormSet(self.request.POST)
-        else:
-            data['ingredients'] = IngredientFormSet()
-        return data
+class RecipeUpdateView(SingleObjectMixin, FormView):
+    model = Recipe
+    template_name = 'users/recipe_update.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=Recipe.objects.all())
+        return super().get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=Recipe.objects.all())
+        return super().post(request, *args, **kwargs)
+    
+    def get_form(self, form_class=None):
+        return IngredientFormSet(**self.get_form_kwargs(), instance=self.object)
     
     def form_valid(self, form):
-        form.instance.created_by = self.request.user
-        return super().form_valid(form)
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())
+    
+    def get_success_url(self):
+        return reverse('recipe_list')
+
+
+def create(request):
+    context = {}
+    IngredientsFormset = modelformset_factory(Ingredient, form=IngredientForm)	
+    form = RecipeForm(request.POST or None)
+    formset = IngredientsFormset(request.POST or None, queryset= Ingredient.objects.none(), prefix='ingredient')
+    if request.method == "POST":
+        if form.is_valid() and formset.is_valid():
+            form.instance.created_by = request.user
+            try:
+                with transaction.atomic():
+                    recipe = form.save(commit=False)
+                    recipe.save()
+
+                    for ingredient in formset:
+                        data = ingredient.save(commit=False)
+                        data.recipe = recipe
+                        data.save()
+            except IntegrityError as exc:
+                print(exc)
+
+            return redirect('recipe_list')
+
+    context['formset'] = formset
+    context['form'] = form
+    return render(request, 'users/recipe_form.html', context)
+
+
+def recipe_delete(request, pk):
+    obj = Recipe.objects.get(id=pk)
+    obj.delete()
+    return redirect('recipe_list')

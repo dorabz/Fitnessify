@@ -1,0 +1,43 @@
+{% extends "users/base.html" %}
+{% load static %}
+{% block content %}
+{% block title %}
+<title>Recipe edit</title>
+{% endblock  %}
+<div class="container p-5 my-3 border">
+<form action="" method="post" enctype="multipart/form-data">
+
+    {% for hidden in form.hidden_fields %}
+        {{hidden_field.errors}}
+        {{ hidden_field }}
+    {% endfor %}
+
+    {% csrf_token %}
+
+    <p class="h3">{{ recipe.recipe_name }}</p>
+    <br>
+    
+    {{ form.management_form }}
+    {{ form.non_form_errors }}
+
+    
+
+    {% for ingredient_form in form.forms %}
+
+        {% for hidden_field in ingredient_form.hidden_fields %}
+            {{ hidden_field.errors }}
+        {% endfor %}
+        <table>
+            {{ ingredient_form.as_table }}
+        </table>
+
+        <br>
+    {% endfor %}
+    <p>
+        <button type="submit" value="Update recipe" class="btn btn-primary w-100 mb-3">Update recipe</button>
+        <a href="{% url 'recipe_list' %}" role="button" class="btn btm-secondary w-100">Cancel</a>
+    </p>
+
+</form>
+</div>
+{% endblock  %}

@@ -15,6 +15,9 @@ urlpatterns = [
     path("<int:pk>/", login_required(views.ExerciseDetailView.as_view()), name="exercise_detail"),
     path("<int:pk>/update/", login_required(views.ExerciseUpdateView.as_view()), name="exercise_update"),
     path("<int:pk>/delete/", login_required(views.ExerciseDeleteView.as_view()), name="exercise_delete"),
-    path("recipe/", login_required(views.RecipeListView.as_view()), name="recipe_list"),
-    path("recipe/create", login_required(views.RecipeCreateView.as_view()), name="recipe_create"),
+
+    path("recipes/", login_required(views.RecipeListView.as_view()), name="recipe_list"),
+    path("recipes/create", login_required(views.create), name="recipe_create"),
+    path("recipes/<int:pk>/update/", login_required(views.RecipeUpdateView.as_view()), name="recipe_update"),
+    path("recipes/<int:pk>/delete/", login_required(views.recipe_delete), name="recipe_delete"),
 ]
