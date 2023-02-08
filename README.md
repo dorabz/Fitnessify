@@ -1,3 +1,3 @@
 # Fitnessify
 
-Repository of the Fitnessify project as a part of the university course Information Systems.
+Repository of the Fitnessify app made in Django.
